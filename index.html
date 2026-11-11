@@ -528,6 +528,23 @@
 .news-modal-share-btn.wa{background:#25d366}
 .news-modal-share-btn.fb{background:#1877f2}
 .news-modal-share-btn.copy{background:#333}
+.cat-filter{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cat-filter::-webkit-scrollbar{display:none}
+.cat-pill{flex:none;white-space:nowrap;padding:7px 15px;border-radius:999px;border:1px solid #ddd;background:#fff;font-size:13.5px;font-weight:700;color:#333;cursor:pointer;font-family:inherit}
+.cat-pill.on{background:var(--red);border-color:var(--red);color:#fff}
+.most-read-list{list-style:none;margin:0;padding:0}
+.most-read-list li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid #eee}
+.most-read-list li:last-child{border-bottom:none}
+.most-read-list .rank{font-size:24px;font-weight:900;color:var(--red);line-height:1.1;min-width:26px}
+.most-read-list a{color:#111;text-decoration:none;font-weight:700;font-size:15.5px;line-height:1.45}
+.most-read-list a:hover{color:var(--red)}
+.most-read-list .mr-views{display:block;font-size:12.5px;color:#888;font-weight:500;margin-top:2px}
+.news-modal-related{margin-top:14px;padding-top:12px;border-top:1px solid #eee}
+.news-modal-related-title{margin:0 0 6px;font-size:16px;font-weight:800;color:#111}
+.news-modal-related-row{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #f2f2f2;text-decoration:none;color:#111}
+.news-modal-related-row:last-child{border-bottom:none}
+.rel-thumb{width:72px;height:48px;flex:0 0 72px;background-size:cover;background-position:center;border-radius:6px;background-color:#eee}
+.rel-title{font-size:14px;font-weight:700;line-height:1.4}
 .news-modal-like{background:#f1f1f1;border:1px solid #ddd;border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer}
 .news-modal-like.liked{background:#ffe9e7;border-color:#c40f04;color:#c40f04}
 .news-modal-close{position:absolute;top:10px;right:10px;z-index:2;width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:22px;line-height:1;cursor:pointer}
@@ -890,6 +907,7 @@ html{overflow-x:clip}
     <!-- ═══ LATEST (admin posts appear here first) ═══ -->
   <section id="latest">
     <div class="sec-head"><span class="bar"></span><h2>সর্বশেষ খবর</h2></div>
+    <div class="cat-filter" id="catFilter"><button type="button" class="cat-pill on" data-cat="সব">সব</button><button type="button" class="cat-pill" data-cat="জাতীয়">জাতীয়</button><button type="button" class="cat-pill" data-cat="খেলা">খেলা</button><button type="button" class="cat-pill" data-cat="শিক্ষা">শিক্ষা</button><button type="button" class="cat-pill" data-cat="স্বাস্থ্য">স্বাস্থ্য</button><button type="button" class="cat-pill" data-cat="বিনোদন">বিনোদন</button><button type="button" class="cat-pill" data-cat="রাজনীতি">রাজনীতি</button><button type="button" class="cat-pill" data-cat="আন্তর্জাতিক">আন্তর্জাতিক</button><button type="button" class="cat-pill" data-cat="ভারত">ভারত</button></div>
     <div class="grid" id="latestGrid">
     <article class="card" data-aid="ned6fbc01f70b">
         <div class="thumb" style="background-image:url(img/mushfiqur-7000.jpg);background-size:cover;background-position:center"></div>
@@ -1826,6 +1844,11 @@ html{overflow-x:clip}
         <p>নিয়মিত নিজের লেখা পোস্ট জমলে Google AdSense-এ আবেদন করুন। অনুমোদন পেলে এই পেজের বিজ্ঞাপনের জায়গাগুলোতে অটোমেটিক বিজ্ঞাপন দেখাবে — সেখান থেকেই আয়।</p>
       </div>
     </div>
+  </section>
+
+  <section id="mostRead">
+    <div class="sec-head"><span class="bar"></span><h2>সর্বাধিক পঠিত</h2></div>
+    <ol class="most-read-list" id="mostReadList"></ol>
   </section>
 
   <!-- ═══ LIVE RSS : today's headlines from other newspapers (free feed) — kept DOWN the page,
@@ -2942,6 +2965,8 @@ html{overflow-x:clip}
     }
     if (window.addNewsMoreButtons) window.addNewsMoreButtons();
     if (window.__rk24vl && window.__rk24vl.init) window.__rk24vl.init();
+    if (window.filterNewsByCat && window.__rk24CurrentCat) window.filterNewsByCat(window.__rk24CurrentCat);
+    if (window.renderMostRead) window.renderMostRead();
   }
   function fetchLive(){
     function doFetch(token){
@@ -2993,7 +3018,7 @@ html{overflow-x:clip}
       <div class="news-modal-meta" id="newsModalMeta"></div>
       <p class="news-modal-text" id="newsModalText"></p>
       <div class="news-modal-vl"><span id="newsModalViews"></span><button class="news-modal-like" id="newsModalLike" type="button"></button></div>
-      <div class="news-modal-share"><span class="news-modal-share-label">শেয়ার করুন:</span><a class="news-modal-share-btn wa" id="newsModalShareWa" href="#" target="_blank" rel="noopener">WhatsApp</a><a class="news-modal-share-btn fb" id="newsModalShareFb" href="#" target="_blank" rel="noopener">Facebook</a><button class="news-modal-share-btn copy" id="newsModalShareCopy" type="button">লিংক কপি</button></div>
+      <div class="news-modal-share"><span class="news-modal-share-label">শেয়ার করুন:</span><a class="news-modal-share-btn wa" id="newsModalShareWa" href="#" target="_blank" rel="noopener">WhatsApp</a><a class="news-modal-share-btn fb" id="newsModalShareFb" href="#" target="_blank" rel="noopener">Facebook</a><button class="news-modal-share-btn copy" id="newsModalShareCopy" type="button">লিংক কপি</button></div><div class="news-modal-related" id="newsModalRelated" style="display:none"></div>
     </div>
   </div>
 </div>
@@ -3015,6 +3040,7 @@ html{overflow-x:clip}
   var mShareWa = document.getElementById('newsModalShareWa');
   var mShareFb = document.getElementById('newsModalShareFb');
   var mShareCopy = document.getElementById('newsModalShareCopy');
+  var mRelated = document.getElementById('newsModalRelated');
   var lightbox = document.getElementById('imgLightbox');
   var lbImg = document.getElementById('imgLightboxImg');
   var currentAid = null;
@@ -3035,6 +3061,42 @@ html{overflow-x:clip}
   function htmlOf(card, sel){
     var el = card.querySelector(sel);
     return el ? el.innerHTML : '';
+  }
+  function normCat(t){ return String(t || '').replace(/^\s*প্রধান খবর\s*·\s*/, '').trim(); }
+  function buildRelated(card){
+    var box = mRelated;
+    if (!box) return;
+    var myCat = normCat(textOf(card, '.cat'));
+    var myAid = card.getAttribute('data-aid') || '';
+    var all = Array.prototype.slice.call(document.querySelectorAll('article.lead-card, #latestGrid article.card'));
+    var same = all.filter(function(c){ return c.getAttribute('data-aid') !== myAid && normCat(textOf(c, '.cat')) === myCat; });
+    var picks = same.slice(0, 3);
+    if (picks.length < 3) {
+      var others = all.filter(function(c){ return c.getAttribute('data-aid') !== myAid && picks.indexOf(c) === -1; });
+      picks = picks.concat(others.slice(0, 3 - picks.length));
+    }
+    box.innerHTML = '';
+    if (!picks.length) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    var title = document.createElement('h3');
+    title.className = 'news-modal-related-title';
+    title.textContent = 'আরও পড়ুন';
+    box.appendChild(title);
+    picks.forEach(function(c){
+      var row = document.createElement('a');
+      row.href = 'javascript:void(0)';
+      row.className = 'news-modal-related-row';
+      row.setAttribute('data-aid', c.getAttribute('data-aid') || '');
+      var th = document.createElement('span');
+      th.className = 'rel-thumb';
+      var im = imgOf(c);
+      if (im) th.style.backgroundImage = 'url(' + im + ')';
+      var tt = document.createElement('span');
+      tt.className = 'rel-title';
+      tt.textContent = textOf(c, 'h3');
+      row.appendChild(th); row.appendChild(tt);
+      box.appendChild(row);
+    });
   }
   function openNews(card){
     currentAid = card.getAttribute('data-aid') || '';
@@ -3065,6 +3127,7 @@ html{overflow-x:clip}
       mLike.innerHTML = '👍 লাইক (০)';
       mLike.classList.remove('liked');
     }
+    buildRelated(card);
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
   }
@@ -3091,6 +3154,13 @@ html{overflow-x:clip}
     function done(){ mShareCopy.textContent = 'কপি হয়েছে ✓'; setTimeout(function(){ mShareCopy.textContent = 'লিংক কপি'; }, 2000); }
     if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(done).catch(function(){ done(); }); }
     else { var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); done(); }
+  });
+  if (mRelated) mRelated.addEventListener('click', function(e){
+    var row = e.target.closest('.news-modal-related-row');
+    if (!row) return;
+    e.preventDefault();
+    var card = document.querySelector('article[data-aid="' + row.getAttribute('data-aid') + '"]');
+    if (card) openNews(card);
   });
   mLike.addEventListener('click', function(){
     if (!currentAid) return;
@@ -3156,6 +3226,87 @@ html{overflow-x:clip}
 
 <script>
 (function(){try{var f=new Intl.DateTimeFormat('bn-BD',{timeZone:'Asia/Dhaka',weekday:'long',day:'numeric',month:'long',year:'numeric'});var d=f.format(new Date());var s=document.getElementById('siteDate');if(s)s.textContent=d;document.querySelectorAll('.autoDate').forEach(function(e){e.textContent=d;});}catch(e){}})();
+</script>
+<script>
+/* ── RK MEDIA 24: category filter + Most Read ── */
+(function(){
+  // --- Category filter: filters #latestGrid cards by their .cat text ---
+  window.__rk24CurrentCat = 'সব';
+  window.filterNewsByCat = function(cat){
+    window.__rk24CurrentCat = cat;
+    var pills = document.querySelectorAll('#catFilter .cat-pill');
+    pills.forEach(function(p){ p.classList.toggle('on', p.getAttribute('data-cat') === cat); });
+    var cards = document.querySelectorAll('#latestGrid article.card');
+    cards.forEach(function(card){
+      var c = card.querySelector('.cat');
+      var t = c ? c.textContent.trim() : '';
+      card.style.display = (cat === 'সব' || t === cat) ? '' : 'none';
+    });
+  };
+  var filter = document.getElementById('catFilter');
+  if (filter) filter.addEventListener('click', function(e){
+    var b = e.target.closest('.cat-pill');
+    if (b) window.filterNewsByCat(b.getAttribute('data-cat'));
+  });
+  // --- Most Read: rank by shared view counts (.vl-vc, Bengali numerals) ---
+  var BN_D = {'০':0,'১':1,'২':2,'৩':3,'৪':4,'৫':5,'৬':6,'৭':7,'৮':8,'৯':9};
+  function toNum(s){
+    var str = String(s || '');
+    var b = str.match(/[০-৯]+/);
+    if (b) { var n = 0; b[0].split('').forEach(function(d){ n = n*10 + BN_D[d]; }); return n; }
+    var m = str.replace(/[^0-9]/g, '');
+    return m ? parseInt(m, 10) : 0;
+  }
+  function bn(n){ n = Math.max(0, parseInt(n, 10) || 0); return String(n).split('').map(function(c){ return '০১২৩৪৫৬৭৮৯'[+c] || c; }).join(''); }
+  window.renderMostRead = function(){
+    var list = document.getElementById('mostReadList');
+    if (!list) return;
+    var arts = [];
+    document.querySelectorAll('article.lead-card, #latestGrid article.card').forEach(function(card){
+      var aid = card.getAttribute('data-aid') || '';
+      var h3 = card.querySelector('h3');
+      if (!h3 || !aid) return;
+      var vc = card.querySelector('.vl-vc');
+      arts.push({aid: aid, title: h3.textContent.trim(), views: vc ? toNum(vc.textContent) : 0});
+    });
+    if (!arts.length) return;
+    var hasViews = arts.some(function(a){ return a.views > 0; });
+    var top = hasViews
+      ? arts.slice().sort(function(a, b){ return b.views - a.views; }).slice(0, 5)
+      : arts.slice(0, 5);
+    list.innerHTML = '';
+    top.forEach(function(a, i){
+      var li = document.createElement('li');
+      var num = document.createElement('span'); num.className = 'rank'; num.textContent = String(i + 1);
+      var wrap = document.createElement('div');
+      var link = document.createElement('a'); link.href = 'javascript:void(0)'; link.textContent = a.title;
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        var card = document.querySelector('article[data-aid="' + a.aid + '"]');
+        if (card && window.openNewsModal) window.openNewsModal(card);
+      });
+      wrap.appendChild(link);
+      if (a.views > 0) {
+        var v = document.createElement('span'); v.className = 'mr-views'; v.textContent = '👁 ' + bn(a.views) + ' বার দেখা হয়েছে';
+        wrap.appendChild(v);
+      }
+      li.appendChild(num); li.appendChild(wrap); list.appendChild(li);
+    });
+  };
+  window.renderMostRead();
+  // Re-render when view counts load/change or new cards arrive.
+  var grid = document.getElementById('latestGrid');
+  var leadGrid = document.querySelector('.lead-grid');
+  var timer = null;
+  function schedule(){ if (timer) clearTimeout(timer); timer = setTimeout(function(){ window.renderMostRead(); }, 700); }
+  if (window.MutationObserver) {
+    var obs = new MutationObserver(function(){ schedule(); });
+    if (grid) obs.observe(grid, {childList: true, subtree: true, characterData: true});
+    if (leadGrid) obs.observe(leadGrid, {childList: true, subtree: true, characterData: true});
+  }
+  setTimeout(function(){ window.renderMostRead(); }, 3000);
+  setTimeout(function(){ window.renderMostRead(); }, 8000);
+})();
 </script>
 </body>
 </html>
