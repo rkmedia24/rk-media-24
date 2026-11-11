@@ -570,6 +570,8 @@ html{overflow-x:clip}
 /* Read-more button on every news card — a big clear tap target */
 .news-more{display:inline-block;margin-top:10px;background:#c40f04;color:#fff;border:0;border-radius:999px;padding:9px 18px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
 .news-more:active{transform:scale(.97)}
+/* Cards show picture + headline + "আরো দেখুন" only — body text hidden on the card (full text opens in the detail modal; the text stays in the DOM so the modal still reads it) */
+article.lead-card .body > p:not(.meta), article.card .body > p{display:none !important}
 </style>
 </head>
 <body>
@@ -860,19 +862,18 @@ html{overflow-x:clip}
     <!-- ═══ LEAD ═══ -->
   <section aria-label="প্রধান খবর">
     <div class="lead-grid">
-<article class="lead-card" data-aid="n0813ea6fa294">
-        <img src="img/class-one-admission-age.jpg" alt="২০২৭ শিক্ষাবর্ষে প্রথম শ্রেণিতে ভর্তিতে বয়স ছয় বছর, দ্বিতীয়–নবম শ্রেণিতে লিখিত পরীক্ষা" />
+<article class="lead-card" data-aid="n78c1818b88a4">
+        <img src="img/fatullah-madrasa-fire.jpg" alt="ফতুল্লার মাদ্রাসায় আগুনে ধোঁয়ায় অসুস্থ শিক্ষার্থীরা ঢাকায় চিকিৎসাধীন, একজন ভেন্টিলেটরে" />
         <div class="imgcap">ছবি: RK MEDIA 24-এর জন্য তৈরি এআই চিত্র (প্রতীকী) — আসল ঘটনার ছবি নয়</div>
         <div class="body">
-          <span class="cat">প্রধান খবর · শিক্ষা</span>
-          <h3>২০২৭ শিক্ষাবর্ষে প্রথম শ্রেণিতে ভর্তিতে বয়স ছয় বছর, দ্বিতীয়–নবম শ্রেণিতে লিখিত পরীক্ষা</h3>
-          <p>বেসরকারি স্কুল ও স্কুল অ্যান্ড কলেজে ২০২৭ শিক্ষাবর্ষের ভর্তি নীতিমালা প্রকাশ করেছে শিক্ষা মন্ত্রণালয়। গতকাল মঙ্গলবার মাধ্যমিক ও উচ্চশিক্ষা বিভাগ থেকে জারি করা নীতিমালায় প্রথম শ্রেণিতে ভর্তির ন্যূনতম বয়স পাঁচ বছর থেকে বাড়িয়ে ছয় বছর করা হয়েছে। জাতীয় শিক্ষানীতি অনুযায়ী, সংশ্লিষ্ট শিক্ষাবর্ষের ১ জানুয়ারি শিক্ষার্থীর বয়স ছয় বছর বা তার বেশি হতে হবে, তবে সাত বছরের কম হতে হবে। অর্থাৎ ২০২০ সালের ১ জানুয়ারি থেকে ৩১ ডিসেম্বরের মধ্যে জন্ম নেওয়া শিশুরা প্রথম শ্রেণিতে ভর্তির জন্য বিবেচিত হবে। বয়স নির্ধারণে আবেদন ফরমের সঙ্গে অনলাইন জন্মনিবন্ধন সনদের সত্যায়িত কপি জমা দিতে হবে। বিশেষ চাহিদাসম্পন্ন শিক্ষার্থীদের ক্ষেত্রে বয়সে সর্বোচ্চ পাঁচ বছরের অতিরিক্ত সুবিধা দেওয়া যাবে।</p>
-          <p>প্রথম শ্রেণিতে ভর্তি হবে লটারির মাধ্যমে। লটারিতে নির্বাচিত শিক্ষার্থীদের তালিকার পাশাপাশি সমসংখ্যক শিক্ষার্থীর অপেক্ষমাণ তালিকাও রাখতে হবে। নির্বাচিত কোনো শিক্ষার্থী নির্ধারিত সময়ে ভর্তি না হলে অপেক্ষমাণ তালিকা থেকে পর্যায়ক্রমে ভর্তি নেওয়া হবে। দ্বিতীয় থেকে নবম শ্রেণির শূন্য আসনে লিখিত পরীক্ষার মাধ্যমে মেধাক্রম অনুযায়ী ভর্তি নেওয়া হবে। নবম শ্রেণিতে ভর্তি নেওয়া হবে অষ্টম শ্রেণি বা সমমানের পরীক্ষায় উত্তীর্ণদের মধ্য থেকে।</p>
-          <p>পরীক্ষার মানবণ্টনও ঠিক করে দেওয়া হয়েছে। দ্বিতীয় ও তৃতীয় শ্রেণির ভর্তি পরীক্ষা হবে ৫০ নম্বরের—বাংলায় ১৫, ইংরেজিতে ১৫ ও গণিতে ২০ নম্বর, সময় এক ঘণ্টা। চতুর্থ থেকে নবম শ্রেণি পর্যন্ত পরীক্ষা হবে ১০০ নম্বরের—বাংলায় ৩০, ইংরেজিতে ৩০ ও গণিতে ৪০ নম্বর, সময় দুই ঘণ্টা। অনলাইনে প্রথম শ্রেণির আবেদন ফরমের সর্বোচ্চ মূল্য ১১০ টাকা এবং দ্বিতীয় থেকে নবম শ্রেণির ক্ষেত্রে সর্বোচ্চ ২৫০ টাকা নির্ধারণ করা হয়েছে। সেশন চার্জসহ ভর্তি ফি শিক্ষা মন্ত্রণালয়ের নির্দেশনা অনুযায়ী নির্ধারণ করতে হবে।</p>
-          <p class="meta" style="margin-top:12px">RK MEDIA 24 ডেস্ক · ১১ নভেম্বর ২০২৬ · সূত্র: <a href="https://www.prothomalo.com/education/admission/sn13qu92xv" target="_blank" rel="noopener" style="color:var(--red);font-weight:600">প্রথম আলো</a></p>
+          <span class="cat">প্রধান খবর · জাতীয়</span>
+          <h3>ফতুল্লার মাদ্রাসায় আগুনে ধোঁয়ায় অসুস্থ শিক্ষার্থীরা ঢাকায় চিকিৎসাধীন, একজন ভেন্টিলেটরে</h3>
+          <p>নারায়ণগঞ্জের ফতুল্লার সাইনবোর্ড এলাকায় জামিয়া আশরাফিয়া মাদ্রাসার পাঁচতলা ভবনের দ্বিতীয় তলায় গত সোমবার রাত একটার দিকে আগুন লাগে। ভবনের লাইব্রেরি ও অফিসকক্ষে আগুন ছড়িয়ে পড়ে। ওই সময় ভবনে প্রায় আড়াইশো শিক্ষার্থী অবস্থান করছিল। আগুনের পর বিদ্যুৎ সরবরাহ বন্ধ হয়ে যায় এবং সিঁড়ি দিয়ে নামার সময় ধোঁয়ায় অনেক শিক্ষার্থী অসুস্থ হয়ে পড়ে। পরে তাদের ঢাকার জাতীয় বার্ন ও প্লাস্টিক সার্জারি ইনস্টিটিউটে নেওয়া হয়।</p>
+          <p>আজ বুধবার দুপুরে ইনস্টিটিউটের আবাসিক সার্জন (ইমার্জেন্সি) ডা. সুলতান মাহমুদ শিকদার চিকিৎসার অগ্রগতি জানান। তিনি জানান, নিবিড় পরিচর্যা কেন্দ্রে (আইসিইউ) চারজন রোগী চিকিৎসাধীন ছিল; তাদের মধ্যে একজনের অবস্থার উন্নতি হওয়ায় তাকে সাধারণ ওয়ার্ডে স্থানান্তর করা হয়েছে, আর একজন এখনো ভেন্টিলেটর সাপোর্টে রয়েছেন। চিকিৎসকদের মতে, শিক্ষার্থীদের শরীরে দৃশ্যমান দগ্ধ হওয়ার চিহ্ন পাওয়া যায়নি; ধোঁয়ার কারণে তাদের শ্বাসনালি আক্রান্ত হয়েছে। শিক্ষার্থীদের সার্বিক চিকিৎসা নিশ্চিত করতে দুটি আলাদা মেডিক্যাল বোর্ড গঠন করা হয়েছে। ফায়ার সার্ভিসের প্রাথমিক ধারণা, বৈদ্যুতিক শর্টসার্কিট থেকে আগুনের সূত্রপাত হয়ে থাকতে পারে।</p>
+          <p class="meta" style="margin-top:12px">RK MEDIA 24 ডেস্ক · ১১ নভেম্বর ২০২৬ · সূত্র: <a href="https://www.prothomalo.com/bangladesh/vzykubxyvf" target="_blank" rel="noopener" style="color:var(--red);font-weight:600">প্রথম আলো</a></p>
         </div>
       
-      <div class="vl-row" data-aid="n0813ea6fa294"><span class="vl-views">👁 <b class="vl-vc">০</b> বার দেখা হয়েছে</span><button class="vl-like" type="button">👍 লাইক (<b class="vl-lc">০</b>)</button></div>
+      <div class="vl-row" data-aid="n78c1818b88a4"><span class="vl-views">👁 <b class="vl-vc">০</b> বার দেখা হয়েছে</span><button class="vl-like" type="button">👍 লাইক (<b class="vl-lc">০</b>)</button></div>
     </article>
       <div class="side-list" id="sideList">
         <article class="side-item with-thumb">
@@ -911,6 +912,28 @@ html{overflow-x:clip}
     <div class="sec-head"><span class="bar"></span><h2>সর্বশেষ খবর</h2></div>
     <div class="cat-filter" id="catFilter"><button type="button" class="cat-pill on" data-cat="সব">সব</button><button type="button" class="cat-pill" data-cat="জাতীয়">জাতীয়</button><button type="button" class="cat-pill" data-cat="খেলা">খেলা</button><button type="button" class="cat-pill" data-cat="শিক্ষা">শিক্ষা</button><button type="button" class="cat-pill" data-cat="স্বাস্থ্য">স্বাস্থ্য</button><button type="button" class="cat-pill" data-cat="বিনোদন">বিনোদন</button><button type="button" class="cat-pill" data-cat="রাজনীতি">রাজনীতি</button><button type="button" class="cat-pill" data-cat="আন্তর্জাতিক">আন্তর্জাতিক</button><button type="button" class="cat-pill" data-cat="ভারত">ভারত</button></div>
     <div class="grid" id="latestGrid">
+<article class="card" data-aid="n0139e05b14df">
+        <div class="thumb" style="background-image:url(img/sonar-dam-komlo.jpg);background-size:cover;background-position:center"></div>
+        <div class="body">
+          <span class="cat" style="align-self:flex-start">অর্থনীতি</span>
+          <h3>দেশের বাজারে আবার কমল সোনার দাম, ২২ ক্যারেট ভরিতে ২ লাখ ২৪ হাজার ১৮২ টাকা</h3>
+          <p>দেশের বাজারে আবার কমেছে সোনার দাম। বাংলাদেশ জুয়েলার্স অ্যাসোসিয়েশন (বাজুস) দ্বিতীয় দফায় সোনার দাম কমানোর সিদ্ধান্ত নিয়েছে। নতুন সিদ্ধান্ত অনুযায়ী, সবচেয়ে ভালো মানের ২২ ক্যারেটের প্রতি ভরি সোনার দাম ২ হাজার ৭৪১ টাকা কমে ২ লাখ ২৪ হাজার ১৮২ টাকা হয়েছে (ভ্যাটসহ)। আজ বুধবার (১১ নভেম্বর) সকাল ১০টা থেকে নতুন দাম কার্যকর হয়েছে।</p>
+          <div class="foot"><span class="meta">১১ নভেম্বর ২০২৬ · সূত্র: <a href="https://www.prothomalo.com/business/industry/uqwi53fby4" target="_blank" rel="noopener" style="color:var(--red);font-weight:600">প্রথম আলো</a></span></div>
+        </div>
+      
+      <div class="vl-row" data-aid="n0139e05b14df"><span class="vl-views">👁 <b class="vl-vc">০</b> বার দেখা হয়েছে</span><button class="vl-like" type="button">👍 লাইক (<b class="vl-lc">০</b>)</button></div>
+    </article>
+<article class="card" data-aid="n0813ea6fa294">
+        <div class="thumb" style="background-image:url(img/class-one-admission-age.jpg);background-size:cover;background-position:center"></div>
+        <div class="body">
+          <span class="cat" style="align-self:flex-start">শিক্ষা</span>
+          <h3>২০২৭ শিক্ষাবর্ষে প্রথম শ্রেণিতে ভর্তিতে বয়স ছয় বছর, দ্বিতীয়–নবম শ্রেণিতে লিখিত পরীক্ষা</h3>
+          <p>বেসরকারি স্কুল ও স্কুল অ্যান্ড কলেজে ২০২৭ শিক্ষাবর্ষের ভর্তি নীতিমালা প্রকাশ করেছে শিক্ষা মন্ত্রণালয়। গতকাল মঙ্গলবার মাধ্যমিক ও উচ্চশিক্ষা বিভাগ থেকে জারি করা নীতিমালায় প্রথম শ্রেণিতে ভর্তির ন্যূনতম বয়স পাঁচ বছর থেকে বাড়িয়ে ছয় বছর করা হয়েছে। জাতীয় শিক্ষানীতি অনুযায়ী, সংশ্লিষ্ট শিক্ষাবর্ষের ১ জানুয়ারি শিক্ষার্থীর বয়স ছয় বছর বা তার বেশি হতে হবে, তবে সাত বছরের কম হতে হবে। অর্থাৎ ২০২০ সালের ১ জানুয়ারি থেকে ৩১ ডিসেম্বরের মধ্যে জন্ম নেওয়া শিশুরা প্রথম শ্রেণিতে ভর্তির জন্য বিবেচিত হবে। বয়স নির্ধারণে আবেদন ফরমের সঙ্গে অনলাইন জন্মনিবন্ধন সনদের সত্যায়িত কপি জমা দিতে হবে। বিশেষ চাহিদাসম্পন্ন শিক্ষার্থীদের ক্ষেত্রে বয়সে সর্বোচ্চ পাঁচ বছরের অতিরিক্ত সুবিধা দেওয়া যাবে।</p>
+          <div class="foot"><span class="meta">১১ নভেম্বর ২০২৬ · সূত্র: <a href="https://www.prothomalo.com/education/admission/sn13qu92xv" target="_blank" rel="noopener" style="color:var(--red);font-weight:600">প্রথম আলো</a></span></div>
+        </div>
+      
+      <div class="vl-row" data-aid="n0813ea6fa294"><span class="vl-views">👁 <b class="vl-vc">০</b> বার দেখা হয়েছে</span><button class="vl-like" type="button">👍 লাইক (<b class="vl-lc">০</b>)</button></div>
+    </article>
 <article class="card" data-aid="n23b7fae21dda">
         <div class="thumb" style="background-image:url(img/stress-heart-attack.jpg);background-size:cover;background-position:center"></div>
         <div class="body">
@@ -2966,7 +2989,7 @@ html{overflow-x:clip}
    New posts (from the app editor or from batch uploads) appear here
    automatically — no app reinstall needed. Bundled articles stay as fallback. */
 (function(){
-  var BUNDLED_LEAD_TS = 1794391694716; // Nov 11 2026, 16:08 Dhaka (bundled lead's time)
+  var BUNDLED_LEAD_TS = 1794392603541; // Nov 11 2026, 16:23 Dhaka (bundled lead's time)
   var VL = window.__rk24vl;
   if (!VL) return;
   function fbListUrl(){
@@ -3312,7 +3335,7 @@ html{overflow-x:clip}
     var card = el.closest('article.lead-card, article.card');
     if (card && !el.closest('a, button')) openNews(card);
   }, {passive:true});
-  // Add a big visible "বিস্তারিত পড়ুন" button to every card.
+  // Add a big visible "আরো দেখুন" button to every card, right below the headline.
   // Exposed globally so live (Firestore) cards added later get buttons too.
   window.addNewsMoreButtons = function(){
     var cards = document.querySelectorAll('article.lead-card, article.card');
@@ -3321,10 +3344,10 @@ html{overflow-x:clip}
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'news-more';
-      b.textContent = 'বিস্তারিত পড়ুন';
+      b.textContent = 'আরো দেখুন';
       b.setAttribute('onclick', 'openNewsModal(this.closest("article"))');
       var body = card.querySelector('.body');
-      if (body) body.appendChild(b);
+      if (body) { var h3 = body.querySelector('h3'); if (h3) h3.insertAdjacentElement('afterend', b); else body.appendChild(b); }
     });
   };
   window.addNewsMoreButtons();
