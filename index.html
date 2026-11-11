@@ -1620,6 +1620,9 @@ html{overflow-x:clip}
         </select></div>
       <div class="field"><label for="postBody">খবরের বিস্তারিত</label>
         <textarea id="postBody" placeholder="খবরটা বিস্তারিত লিখুন…" required></textarea></div>
+      <div class="field"><label for="postImg">ছবি (ঐচ্ছিক)</label>
+        <input id="postImg" type="file" accept="image/*" />
+        <p class="hint">ছবি দিলে খবরের সাথে দেখা যাবে। না দিলে রঙিন কার্ড দেখাবে।</p></div>
       <div class="auto-box" id="autoTagBox">
         <div class="ab-title">অটো কীওয়ার্ড ও হ্যাশট্যাগ — পোস্টের সাথে নিজে নিজে যুক্ত হবে</div>
         <div class="tagrow" id="autoKwRow"></div>
@@ -1629,7 +1632,7 @@ html{overflow-x:clip}
         <button class="btn btn-red" type="submit">পোস্ট করুন</button>
         <button class="btn btn-ghost" type="button" data-close>বাতিল</button>
       </div>
-      <p class="meta" style="margin-top:12px">এই পোস্টটি শুধু এই সেশনে দেখা যাবে। সবার জন্য স্থায়ীভাবে সেভ করতে সার্ভার-সংযোগ লাগবে।</p>
+      <p class="meta" style="margin-top:12px">পোস্ট করলেই খবরটা সবার অ্যাপে চলে যাবে — আর নতুন করে ইনস্টল করতে হবে না।</p>
     </form>
     <div class="pw-change">
       <button class="gen-btn" type="button" id="pwToggle" aria-expanded="false" aria-controls="pwBox">পাসওয়ার্ড বদলান</button>
@@ -2202,6 +2205,26 @@ html{overflow-x:clip}
   });
 
   var thumbs = ['th-red','th-navy','th-green','th-teal','th-brown','th-plum'];
+  // Editor image picker: downscale to max 800px, JPEG 0.75, keep as base64 for Firestore.
+  var postImgData = '';
+  document.getElementById('postImg').addEventListener('change', function(){
+    var f = this.files && this.files[0];
+    if (!f) { postImgData = ''; return; }
+    var rd = new FileReader();
+    rd.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        var maxW = 800, w = img.width, h = img.height;
+        if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+        var cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        postImgData = cv.toDataURL('image/jpeg', 0.75);
+      };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(f);
+  });
   document.getElementById('postForm').addEventListener('submit', function(e){
     e.preventDefault();
     var title = document.getElementById('postTitle').value.trim();
@@ -2233,9 +2256,39 @@ html{overflow-x:clip}
     refreshAutoPreview();
     document.getElementById('headlineSuggest').classList.add('hidden');
     document.getElementById('latest').scrollIntoView({ behavior:'smooth' });
-    showToast(autoHeadline
-      ? 'খবর পোস্ট হয়েছে — শিরোনাম, কীওয়ার্ড ও হ্যাশট্যাগ অটো যুক্ত হয়েছে।'
-      : 'খবর পোস্ট হয়েছে — কীওয়ার্ড ও হ্যাশট্যাগ অটো যুক্ত হয়েছে।');
+    // Save to Firestore so the news reaches EVERYONE's app automatically.
+    (function(){
+      var aid = 'n' + Date.now().toString(36) + Math.floor(Math.random()*46656).toString(36);
+      var dateBn = '';
+      try { dateBn = new Intl.DateTimeFormat('bn-BD',{timeZone:'Asia/Dhaka',day:'numeric',month:'long',year:'numeric'}).format(new Date()).replace(/,/g, ''); } catch(e){ dateBn = ''; }
+      var VL = window.__rk24vl;
+      if (!VL) { showToast('খবর শুধু এই ফোনে দেখা যাবে — ইন্টারনেট চেক করুন।'); return; }
+      var fields = {
+        aid: {stringValue: aid},
+        headline: {stringValue: title},
+        category: {stringValue: cat},
+        body: {stringValue: body},
+        excerpt: {stringValue: body.slice(0,200)},
+        img: {stringValue: postImgData || ''},
+        imgcap: {stringValue: postImgData ? 'ছবি: পাঠকের পাঠানো' : ''},
+        dateBn: {stringValue: dateBn},
+        sourceName: {stringValue: ''},
+        sourceUrl: {stringValue: ''},
+        createdAt: {integerValue: String(Date.now())},
+        author: {stringValue: (admin ? admin.name : 'অ্যাডমিন')}
+      };
+      VL.anonSignIn().then(function(tok){
+        var h = {'Content-Type': 'application/json'};
+        if (tok) h['Authorization'] = 'Bearer ' + tok;
+        return fetch('https://firestore.googleapis.com/v1/projects/' + VL.project + '/databases/(default)/documents/news?documentId=' + encodeURIComponent(aid), {
+          method: 'POST', headers: h, body: JSON.stringify({fields: fields})
+        });
+      }).then(function(r){
+        if (r && r.ok) showToast('খবর পোস্ট হয়েছে — সবাই দেখতে পাবে।');
+        else showToast('খবর শুধু এই ফোনে দেখা যাবে — ইন্টারনেট চেক করুন।');
+      }).catch(function(){ showToast('খবর শুধু এই ফোনে দেখা যাবে — ইন্টারনেট চেক করুন।'); });
+    })();
+    postImgData = '';
   });
 
   /* headline search */
@@ -2396,10 +2449,11 @@ html{overflow-x:clip}
   }
   function today(){ var d = new Date(); return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); }
   function init(){
-    var rows = Array.prototype.slice.call(document.querySelectorAll('.vl-row[data-aid]'));
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.vl-row[data-aid]:not([data-vl-init])'));
     if (!rows.length) return;
     anonSignIn().then(function(){
       rows.forEach(function(row){
+        row.setAttribute('data-vl-init','1');
         var aid = row.getAttribute('data-aid');
         var vc = row.querySelector('.vl-vc');
         var lc = row.querySelector('.vl-lc');
@@ -2440,6 +2494,155 @@ html{overflow-x:clip}
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+  // Exposed for the live-news module (Firestore) and the editor.
+  window.__rk24vl = { init: init, anonSignIn: anonSignIn, getToken: function(){ return token; }, apiKey: API_KEY, project: PROJECT };
+})();
+</script>
+<script>
+/* ── RK MEDIA 24: live news from Firestore (collection news) ──
+   New posts (from the app editor or from batch uploads) appear here
+   automatically — no app reinstall needed. Bundled articles stay as fallback. */
+(function(){
+  var BUNDLED_LEAD_TS = 1794366000000; // Nov 11 2026, 09:00 Dhaka (bundled lead's time)
+  var VL = window.__rk24vl;
+  if (!VL) return;
+  function fbListUrl(){
+    return 'https://firestore.googleapis.com/v1/projects/' + VL.project + '/databases/(default)/documents/news?pageSize=20&orderBy=' + encodeURIComponent('createdAt desc');
+  }
+  function decVal(v){
+    if (!v) return '';
+    if (v.stringValue !== undefined) return v.stringValue;
+    if (v.integerValue !== undefined) return parseInt(v.integerValue, 10);
+    if (v.timestampValue !== undefined) return v.timestampValue;
+    return '';
+  }
+  function esc(s){
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function vlRowHtml(aid){
+    return '<div class="vl-row" data-aid="' + esc(aid) + '"><span class="vl-views">\uD83D\uDC41 <b class="vl-vc">\u09E6</b> \u09AC\u09BE\u09B0 \u09A6\u09C7\u0996\u09BE \u09B9\u09DF\u09C7\u099B\u09C7</span><button class="vl-like" type="button">\uD83D\uDC4D \u09B2\u09BE\u0987\u0995 (<b class="vl-lc">\u09E6</b>)</button></div>';
+  }
+  function metaHtml(d){
+    var parts = [];
+    if (d.dateBn) parts.push(esc(d.dateBn));
+    if (d.sourceName && d.sourceUrl) parts.push('\u09B8\u09C2\u09A4\u09CD\u09B0: <a href="' + esc(d.sourceUrl) + '" target="_blank" rel="noopener" style="color:var(--red);font-weight:600">' + esc(d.sourceName) + '</a>');
+    else if (d.sourceName) parts.push('\u09B8\u09C2\u09A4\u09CD\u09B0: ' + esc(d.sourceName));
+    if (d.author) parts.push('\u09B2\u09BF\u0996\u09C7\u099B\u09C7\u09A8: ' + esc(d.author));
+    return parts.join(' \u00B7 ');
+  }
+  function thumbHtml(img){
+    if (img) return '<div class="thumb" style="background-image:url(' + esc(img) + ');background-size:cover;background-position:center"></div>';
+    var ths = ['th-red','th-navy','th-green','th-teal','th-brown','th-plum'];
+    var th = ths[Math.floor(Math.random()*ths.length)];
+    return '<div class="thumb ' + th + '"><span class="big">\u09A8\u09A4\u09C1\u09A8</span></div>';
+  }
+  function buildGridCard(d){
+    var a = document.createElement('article');
+    a.className = 'card';
+    a.setAttribute('data-aid', d.aid);
+    a.innerHTML = thumbHtml(d.img) +
+      '<div class="body"><span class="cat" style="align-self:flex-start">' + esc(d.category) + '</span>' +
+      '<h3>' + esc(d.headline) + '</h3>' +
+      '<p>' + esc(d.body) + '</p>' +
+      '<div class="foot"><span class="meta">' + metaHtml(d) + '</span></div></div>' +
+      vlRowHtml(d.aid);
+    return a;
+  }
+  function buildLeadCard(d){
+    var a = document.createElement('article');
+    a.className = 'lead-card';
+    a.setAttribute('data-aid', d.aid);
+    var imgPart = d.img
+      ? '<img src="' + esc(d.img) + '" alt="' + esc(d.headline) + '" />'
+      : thumbHtml('');
+    var capPart = d.imgcap ? '<div class="imgcap">' + esc(d.imgcap) + '</div>' : '';
+    a.innerHTML = imgPart + capPart +
+      '<div class="body"><span class="cat">\u09AA\u09CD\u09B0\u09A7\u09BE\u09A8 \u0996\u09AC\u09B0 \u00B7 ' + esc(d.category) + '</span>' +
+      '<h3>' + esc(d.headline) + '</h3>' +
+      '<p>' + esc(d.body) + '</p>' +
+      '<p class="meta" style="margin-top:12px">RK MEDIA 24 \u09A1\u09C7\u09B8\u09CD\u0995 \u00B7 ' + metaHtml(d) + '</p></div>' +
+      vlRowHtml(d.aid);
+    return a;
+  }
+  // Rebuild the old bundled lead as a grid card (keeps its data-aid, so counts stay).
+  function demoteLead(oldLead){
+    var im = oldLead.querySelector('img');
+    var imgSrc = im ? (im.getAttribute('src') || '') : '';
+    var firstP = oldLead.querySelector('.body p:not(.meta)');
+    var metaP = oldLead.querySelector('p.meta');
+    var metaInner = metaP ? metaP.innerHTML.replace(/^RK MEDIA 24 \u09A1\u09C7\u09B8\u09CD\u0995 \u00B7 /, '') : '';
+    var cat = oldLead.querySelector('.cat');
+    var catText = cat ? cat.textContent.replace(/^\u09AA\u09CD\u09B0\u09A7\u09BE\u09A8 \u0996\u09AC\u09B0 \u00B7 /, '').trim() : '';
+    var card = document.createElement('article');
+    card.className = 'card';
+    card.setAttribute('data-aid', oldLead.getAttribute('data-aid') || '');
+    card.innerHTML = thumbHtml(imgSrc) +
+      '<div class="body"><span class="cat" style="align-self:flex-start">' + esc(catText) + '</span>' +
+      '<h3>' + esc(oldLead.querySelector('h3') ? oldLead.querySelector('h3').textContent : '') + '</h3>' +
+      '<p>' + esc(firstP ? firstP.textContent.trim() : '') + '</p>' +
+      '<div class="foot"><span class="meta">' + metaInner + '</span></div></div>' +
+      vlRowHtml(oldLead.getAttribute('data-aid') || '');
+    return card;
+  }
+  function render(docs){
+    if (!docs.length) return;
+    var grid = document.getElementById('latestGrid');
+    var leadGrid = document.querySelector('.lead-grid');
+    if (!grid || !leadGrid) return;
+    var fresh = docs.filter(function(d){ return !document.querySelector('article[data-aid="' + d.aid + '"]'); });
+    if (!fresh.length) return;
+    var newest = fresh[0];
+    var rest = fresh.slice(1);
+    if (newest.createdAt && newest.createdAt > BUNDLED_LEAD_TS) {
+      var oldLead = leadGrid.querySelector('article.lead-card');
+      if (oldLead) {
+        var demoted = demoteLead(oldLead);
+        oldLead.parentNode.removeChild(oldLead);
+        grid.insertBefore(demoted, grid.firstChild);
+      }
+      leadGrid.insertBefore(buildLeadCard(newest), leadGrid.firstChild);
+    } else {
+      rest = fresh;
+    }
+    for (var i = rest.length - 1; i >= 0; i--) {
+      grid.insertBefore(buildGridCard(rest[i]), grid.firstChild);
+    }
+    if (window.addNewsMoreButtons) window.addNewsMoreButtons();
+    if (window.__rk24vl && window.__rk24vl.init) window.__rk24vl.init();
+  }
+  function fetchLive(){
+    function doFetch(token){
+      var h = {};
+      if (token) h['Authorization'] = 'Bearer ' + token;
+      return fetch(fbListUrl(), {headers: h}).then(function(r){
+        if (!r.ok) throw new Error('http ' + r.status);
+        return r.json();
+      }).then(function(j){
+        var docs = (j.documents || []).map(function(doc){
+          var f = doc.fields || {};
+          return {
+            aid: decVal(f.aid) || (doc.name || '').split('/').pop(),
+            headline: decVal(f.headline),
+            category: decVal(f.category) || '\u09B8\u09B0\u09CD\u09AC\u09B6\u09C7\u09B7',
+            body: decVal(f.body),
+            excerpt: decVal(f.excerpt),
+            img: decVal(f.img),
+            imgcap: decVal(f.imgcap),
+            dateBn: decVal(f.dateBn),
+            sourceName: decVal(f.sourceName),
+            sourceUrl: decVal(f.sourceUrl),
+            createdAt: decVal(f.createdAt) || 0,
+            author: decVal(f.author)
+          };
+        }).filter(function(d){ return d.headline && d.body; });
+        docs.sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+        render(docs);
+      });
+    }
+    VL.anonSignIn().then(function(tok){ return doFetch(tok); }).catch(function(){ /* keep bundled articles */ });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fetchLive);
+  else fetchLive();
 })();
 </script>
 
@@ -2585,7 +2788,8 @@ html{overflow-x:clip}
     if (card && !el.closest('a, button')) openNews(card);
   }, {passive:true});
   // Add a big visible "বিস্তারিত পড়ুন" button to every card.
-  (function(){
+  // Exposed globally so live (Firestore) cards added later get buttons too.
+  window.addNewsMoreButtons = function(){
     var cards = document.querySelectorAll('article.lead-card, article.card');
     cards.forEach(function(card){
       if (card.querySelector('.news-more')) return;
@@ -2597,7 +2801,8 @@ html{overflow-x:clip}
       var body = card.querySelector('.body');
       if (body) body.appendChild(b);
     });
-  })();
+  };
+  window.addNewsMoreButtons();
 })();
 </script>
 
