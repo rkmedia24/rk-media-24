@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rkmedia24.github.io/rk-media-24/sitemap.xml
