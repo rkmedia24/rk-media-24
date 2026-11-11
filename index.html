@@ -420,16 +420,16 @@
   }
   @media (max-width:560px){
     .grid{grid-template-columns:1fr}
-    /* App/phone: latest-news grid shows 2 news side by side with short cards,
+    /* App/phone: latest-news grid shows 3 news side by side with short cards,
        so many news are visible at once. The auto hashtags stay in the detail
        view (tap a news to read it) — only the grid cards hide them. */
-    #latestGrid.grid{grid-template-columns:repeat(2,1fr);gap:10px}
-    #latestGrid .card .thumb{height:90px}
-    #latestGrid .card h3{font-size:13.5px;line-height:1.35}
-    #latestGrid .card p{font-size:12.5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    #latestGrid.grid{grid-template-columns:repeat(3,1fr);gap:8px}
+    #latestGrid .card .thumb{height:70px}
+    #latestGrid .card h3{font-size:12px;line-height:1.3}
+    #latestGrid .card p{font-size:11px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
     #latestGrid .card .tagrow,#latestGrid .card .tagline,#latestGrid .card .copy-tags{display:none}
-    #latestGrid .card .foot{font-size:12px}
-    #latestGrid .card .vl-row{font-size:12.5px}
+    #latestGrid .card .foot{font-size:11px}
+    #latestGrid .card .vl-row{font-size:11px}
     footer .cols{grid-template-columns:1fr}
     body{font-size:16px}
     .hero .cap{position:static;background:#0a1424;padding:16px 18px 18px}
