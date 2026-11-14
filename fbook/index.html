@@ -17,12 +17,16 @@
         --blue:#0866ff; --blue-press:#0757d6; --red:#0866ff; --green:#45bd62;
         --header:#ffffff; --shadow:0 1px 2px rgba(0,0,0,.12);
         --chip-blue:#0866ff;
+        --icon-bg:#dceaff; --icon-fg:#0866ff; --icon-press:#c3d9fb;
+        --tab-idle:#4a90d9;
       }
       @media (prefers-color-scheme: dark){
         :root{
           --bg:#18191a; --card:#242526; --text:#e4e6eb; --text2:#b0b3b8;
           --divider:#3e4042; --hover:#3a3b3c; --press:#4e4f50; --input:#3a3b3c;
           --header:#242526; --shadow:0 1px 2px rgba(0,0,0,.5);
+          --icon-bg:rgba(77,163,255,.22); --icon-fg:#7db4ff; --icon-press:rgba(77,163,255,.38);
+          --tab-idle:#7db4ff;
         }
       }
       *{ box-sizing:border-box; }
@@ -55,15 +59,16 @@
       .hactions{ display:flex; align-items:center; gap:8px; }
       .icon-btn{
         position:relative; width:40px; height:40px; min-height:40px; border-radius:50%;
-        background:var(--input); display:flex; align-items:center; justify-content:center;
-        flex:0 0 auto;
+        background:var(--icon-bg); display:flex; align-items:center; justify-content:center;
+        flex:0 0 auto; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
       }
-      .icon-btn:active{ background:var(--press); }
-      .icon-btn svg{ width:20px; height:20px; fill:var(--text); }
+      .icon-btn:active{ background:var(--icon-press); }
+      .icon-btn svg{ width:20px; height:20px; fill:var(--icon-fg); }
       .icon-btn .bdg{
         position:absolute; top:-3px; right:-4px; min-width:19px; height:19px; padding:0 5px;
         border-radius:10px; background:var(--chip-blue); color:#fff; font-size:12px; font-weight:600;
         display:flex; align-items:center; justify-content:center; border:2px solid var(--header);
+        pointer-events:none;
       }
       .avatar-btn{ width:40px; height:40px; min-height:40px; border-radius:50%; overflow:hidden; flex:0 0 auto; }
       .avatar-btn img{ width:100%; height:100%; object-fit:cover; }
@@ -74,11 +79,12 @@
       }
       .tab-btn{
         position:relative; height:52px; min-height:52px; display:flex; align-items:center; justify-content:center;
-        border-radius:8px; margin:3px 2px;
+        border-radius:8px; margin:3px 2px; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
       }
-      .tab-btn svg{ width:26px; height:26px; fill:var(--text2); }
+      .tab-btn svg{ width:26px; height:26px; fill:var(--tab-idle); }
       .tab-btn:active{ background:var(--hover); }
       .tab-btn.active svg{ fill:var(--blue); }
+      @media (prefers-color-scheme: dark){ .tab-btn.active svg{ fill:#4da3ff; } }
       .tab-btn.active::after{
         content:""; position:absolute; left:2px; right:2px; bottom:-3px; height:3px;
         background:var(--blue); border-radius:2px;
@@ -86,7 +92,7 @@
       .tab-btn .bdg{
         position:absolute; top:4px; right:calc(50% - 24px); min-width:19px; height:19px; padding:0 5px;
         border-radius:10px; background:var(--chip-blue); color:#fff; font-size:12px; font-weight:600;
-        display:flex; align-items:center; justify-content:center;
+        display:flex; align-items:center; justify-content:center; pointer-events:none;
       }
       .tab-btn .tab-avatar{ width:27px; height:27px; border-radius:50%; object-fit:cover; }
       .tab-btn.active .tab-avatar{ outline:2px solid var(--blue); outline-offset:1px; }
@@ -181,7 +187,7 @@
         margin:0; padding:34px 18px; text-align:center; font-size:23px; font-weight:600; color:#fff;
         background:linear-gradient(135deg,#0b3d91,#0866ff 55%,#00a2ff);
       }
-      .post-img{ width:100%; max-height:560px; object-fit:cover; cursor:pointer; }
+      .post-img{ width:100%; max-height:560px; object-fit:cover; cursor:pointer; background:var(--input); }
       .post-stats{
         display:flex; align-items:center; justify-content:space-between;
         padding:9px 12px; color:var(--text2); font-size:14.5px;
@@ -199,6 +205,9 @@
       }
       .post-actions button:active{ background:var(--hover); }
       .post-actions svg{ width:20px; height:20px; fill:var(--text2); }
+      .post-actions button[data-act="like"] svg{ fill:#0866ff; }
+      .post-actions button[data-act="comment"] svg{ fill:#45bd62; }
+      .post-actions button[data-act="share"] svg{ fill:#f79c38; }
       .post-actions button.liked{ color:var(--blue); }
       .post-actions button.liked svg{ fill:var(--blue); }
       .comments{ padding:2px 12px 12px; }
@@ -256,9 +265,16 @@
       .watch-meta b{ font-size:15.5px; line-height:1.3; display:block; }
 
       /* ---------- Notifications ---------- */
-      .notif{ display:flex; gap:11px; padding:11px 12px; align-items:flex-start; border-radius:8px; }
+      .notif{
+        display:flex; gap:11px; padding:11px 12px; align-items:flex-start; border-radius:8px;
+        width:100%; text-align:left; min-height:64px; cursor:pointer;
+        touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+      }
       .notif + .notif{ border-top:1px solid var(--divider); }
+      .notif:active{ background:var(--hover); }
       .notif.unread{ background:rgba(8,102,255,.08); }
+      .notif .n-go{ width:18px; height:18px; fill:var(--tab-idle); flex:0 0 auto; margin-top:19px; }
+      .post-flash{ outline:3px solid var(--blue); outline-offset:-3px; }
       .notif .n-avwrap{ position:relative; flex:0 0 auto; }
       .notif .n-av{ width:54px; height:54px; border-radius:50%; object-fit:cover; }
       .notif .n-av.init{ display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:21px; }
@@ -1067,11 +1083,11 @@
       ];
 
       var NOTIFS = [
-        { who: "arif", icon: "like", color: "#0866ff", text: "<b>Arif Hossain</b> liked your post about Sylhet tea garden.", time: "12m", unread: true },
-        { who: "tanvir", icon: "comment", color: "#45bd62", text: "<b>Tanvir Ahmed</b> commented: “সুন্দর কভারেজ, ধন্যবাদ!”", time: "1h", unread: true },
-        { who: "nabil", icon: "friend", color: "#0866ff", text: "<b>Nabil Islam</b> sent you a friend request.", time: "3h", unread: true },
-        { who: "page", icon: "page", color: "#0866ff", text: "<b>RK MEDIA 24</b> — your page was mentioned in a post today.", time: "Yesterday", unread: false },
-        { who: "ruma", icon: "like", color: "#0866ff", text: "<b>Ruma Akter</b> liked your photo.", time: "Yesterday", unread: false }
+        { who: "arif", icon: "like", color: "#0866ff", text: "<b>Arif Hossain</b> liked your post about Sylhet tea garden.", time: "12m", unread: true, go: "post", post: "p1" },
+        { who: "tanvir", icon: "comment", color: "#45bd62", text: "<b>Tanvir Ahmed</b> commented: “সুন্দর কভারেজ, ধন্যবাদ!”", time: "1h", unread: true, go: "post", post: "p2", comments: true },
+        { who: "nabil", icon: "friend", color: "#0866ff", text: "<b>Nabil Islam</b> sent you a friend request.", time: "3h", unread: true, go: "friends" },
+        { who: "page", icon: "page", color: "#0866ff", text: "<b>RK MEDIA 24</b> — your page was mentioned in a post today.", time: "Yesterday", unread: false, go: "my-pages" },
+        { who: "ruma", icon: "like", color: "#0866ff", text: "<b>Ruma Akter</b> liked your photo.", time: "Yesterday", unread: false, go: "post", post: "p1" }
       ];
 
       var CHATS = {
@@ -1109,7 +1125,7 @@
             : (p.img
               ? '<img class="s-av" src="' + p.img + '" alt="" />'
               : '<span class="s-av init" style="background:' + p.color + ';">' + p.name.charAt(0) + '</span>');
-          b.innerHTML = '<img class="bg" src="' + s.img + '" alt="" />' + av +
+          b.innerHTML = '<img class="bg" loading="lazy" decoding="async" src="' + s.img + '" alt="" />' + av +
             (s.own ? '<span class="plus-badge">+</span>' : '') +
             '<span class="s-name">' + (s.own ? "Create story" : p.name) + '</span>';
           b.addEventListener("click", function () { openStory(i); });
@@ -1156,7 +1172,7 @@
           '<button class="dots-btn" data-act="dots" aria-label="Post options">' + I.dots + '</button></div>';
         if (post.bigText) h += '<p class="post-text big">' + post.text.replace(/\n/g, "<br />") + '</p>';
         else h += '<p class="post-text">' + post.text + '</p>';
-        if (post.img) h += '<img class="post-img" src="' + post.img + '" alt="' + (post.imgAlt || "") + '" data-act="photo" />';
+        if (post.img) h += '<img class="post-img" loading="lazy" decoding="async" src="' + post.img + '" alt="' + (post.imgAlt || "") + '" data-act="photo" />';
         h += '<div class="post-stats"><span class="like-grp">' +
           (post.likes > 0 ? '<span class="like-ico">' + I.thumbSm + '</span>' : '') +
           '<span data-role="likes">' + (post.likes > 0 ? post.likes : "") + '</span></span>' +
@@ -1299,15 +1315,51 @@
         var wrap = $("#notif-list"); wrap.innerHTML = "";
         NOTIFS.forEach(function (n) {
           var p = PEOPLE[n.who];
-          var row = document.createElement("div");
+          var row = document.createElement("button");
           row.className = "notif" + (n.unread ? " unread" : "");
+          row.setAttribute("type", "button");
+          row.setAttribute("aria-label", "Open notification: " + p.name);
           row.innerHTML = '<div class="n-avwrap">' + avHTML(p, "n-av") +
             '<span class="n-ico" style="background:' + n.color + ';">' + NICONS[n.icon] + '</span></div>' +
             '<div class="n-body">' + n.text + '<div class="muted">' + n.time + " ago</div></div>" +
-            (n.unread ? '<span class="n-dot"></span>' : '');
+            (n.unread ? '<span class="n-dot"></span>' : '<svg class="n-go" viewBox="0 0 24 24"><path d="M8.6 5.4a1.15 1.15 0 0 1 1.6 0l6.4 6.4a1.15 1.15 0 0 1 0 1.6l-6.4 6.4a1.15 1.15 0 1 1-1.6-1.6L14.2 12 8.6 6.4a1.15 1.15 0 0 1 0-1z"/></svg>');
+          row.addEventListener("click", function () { openNotif(n); });
           wrap.appendChild(row);
         });
         updateBadges();
+      }
+      function openNotif(n) {
+        var wasUnread = n.unread;
+        n.unread = false;
+        renderNotifs();
+        if (n.go === "friends") {
+          showView("friends");
+          toast("Friend requests — tap Confirm or Delete");
+          return;
+        }
+        if (n.go === "my-pages") {
+          showView("my-pages");
+          toast("Your Pages — RK MEDIA 24 was mentioned today");
+          return;
+        }
+        /* "post" — go to the feed, open that post and highlight it */
+        var post = n.post ? findPost(n.post) : null;
+        showView("home");
+        if (!post) { if (wasUnread) toast("Notification marked as read"); return; }
+        if (n.comments) post.commentsOpen = true;
+        renderFeed();
+        setTimeout(function () {
+          var card = document.querySelector('#feed [data-post="' + post.id + '"]');
+          if (!card) return;
+          card.scrollIntoView({ block: "center" });
+          card.classList.add("post-flash");
+          setTimeout(function () { card.classList.remove("post-flash"); }, 2200);
+          if (n.comments) {
+            var inp = card.querySelector(".comment-form input");
+            if (inp) inp.focus({ preventScroll: true });
+          }
+        }, 60);
+        toast(wasUnread ? "Notification opened and marked as read" : "Opening the post");
       }
       function updateBadges() {
         var unread = NOTIFS.filter(function (n) { return n.unread; }).length;
